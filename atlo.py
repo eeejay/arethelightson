@@ -3,8 +3,14 @@ from twisted.web import server, resource
 from twisted.internet import reactor
 import json
 from twisted.web.error import NoResource
+import sys
 
 THRESHOLD = 0.2
+DEVICE = 0
+try:
+    DEVICE = int(sys.argv[-1])
+except:
+    DEVICE = 0
 
 class Root(resource.Resource):
     def getChild(self, name, request):
@@ -21,7 +27,7 @@ class RoomLight(resource.Resource):
                            'lightson': brightness > THRESHOLD})
 
     def get_room_brightness(self):
-        capture = cv.CreateCameraCapture(1)
+        capture = cv.CreateCameraCapture(DEVICE)
         cv.QueryFrame(capture)
         cv.QueryFrame(capture)
         cv.QueryFrame(capture)
