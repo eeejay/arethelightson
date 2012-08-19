@@ -1,5 +1,6 @@
 import cv, PIL.Image
 from twisted.web import server, resource
+from twisted.application import service, internet
 from twisted.internet import reactor
 import json
 from twisted.web.error import NoResource
@@ -36,7 +37,14 @@ class RoomLight(resource.Resource):
         img = PIL.Image.fromstring('RGB', (frame.width, frame.height), frame.tostring()).convert('L')
         return img.getextrema()[1]/255.0
 
-if __name__ == "__main__":
-    site = server.Site(Root())
+# Run it!
+
+site = server.Site(Root())
+
+application = service.Application("Are the lights on?")
+service = internet.TCPServer(8080, site)
+service.setServiceParent(application)
+
+if __name__ == '__main__':
     reactor.listenTCP(8080, site)
     reactor.run()
